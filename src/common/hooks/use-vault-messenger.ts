@@ -113,9 +113,9 @@ export const useVaultMessenger = () => {
   const doLockWallet = () =>
     innerMessageWrapper({ method: InternalMethods.lockWallet, payload: undefined });
 
-  const doCompleteOnboarding = () =>
+  const doRedirectAfterSetPassword = () =>
     innerMessageWrapper({
-      method: InternalMethods.completeOnboarding,
+      method: InternalMethods.redirectAfterSetPassword,
       payload: undefined,
     });
 
@@ -129,6 +129,6 @@ export const useVaultMessenger = () => {
     doStoreSeed,
     doUnlockWallet,
     doSwitchAccount,
-    doCompleteOnboarding,
+    doRedirectAfterSetPassword,
   };
 };

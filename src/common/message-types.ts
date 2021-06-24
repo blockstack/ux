@@ -22,7 +22,7 @@ export enum InternalMethods {
   unlockWallet = 'unlockWallet',
   lockWallet = 'lockWallet',
   switchAccount = 'switchAccount',
-  completeOnboarding = 'completeOnboarding',
+  redirectAfterSetPassword = 'redirectAfterSetPassword',
 }
 
 export type ExtensionMethods = ExternalMethods | InternalMethods;
@@ -63,7 +63,7 @@ export type TransactionResponseMessage = Message<
 >;
 
 export type CompleteOnboardingResponseMessage = Message<
-  InternalMethods.completeOnboarding,
+  InternalMethods.redirectAfterSetPassword,
   undefined
 >;
 

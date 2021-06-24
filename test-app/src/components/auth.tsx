@@ -1,12 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Button, Text, Box, ButtonGroup } from '@stacks/ui';
 import { useConnect } from '@stacks/connect-react';
-import { AppContext } from '@common/context';
 
 export const Auth: React.FC = () => {
-  const state = useContext(AppContext);
   const { doOpenAuth } = useConnect();
-
   return (
     <Box>
       <Text display="block" textStyle="body.large">
@@ -14,7 +11,7 @@ export const Auth: React.FC = () => {
       </Text>
       <ButtonGroup spacing={'base'} mt={'base-loose'}>
         <Button size="lg" mode="primary" onClick={() => doOpenAuth()} data-test="sign-up">
-          {state.isOnboarding ? 'Choose Account' : 'Sign up'}
+          Sign up
         </Button>
       </ButtonGroup>
     </Box>

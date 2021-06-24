@@ -34,7 +34,7 @@ export const SetPasswordPage: React.FC<SetPasswordProps> = ({
   const { doSetPassword, wallet, doFinishSignIn } = useWallet();
   const doChangeScreen = useDoChangeScreen();
   const { decodedAuthRequest } = useOnboardingState();
-  const { doCompleteOnboarding } = useVaultMessenger();
+  const { doRedirectAfterSetPassword } = useVaultMessenger();
 
   const submit = useCallback(
     async (password: string) => {
@@ -72,12 +72,12 @@ export const SetPasswordPage: React.FC<SetPasswordProps> = ({
       if (strengthResult.meetsAllStrengthRequirements) {
         await submit(password);
         // Sends message to background script
-        void doCompleteOnboarding();
+        await doRedirectAfterSetPassword();
         return;
       }
       setLoading(false);
     },
-    [strengthResult, submit, doCompleteOnboarding]
+    [strengthResult, submit, doRedirectAfterSetPassword]
   );
 
   const validationSchema = yup.object({

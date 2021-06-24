@@ -11,8 +11,6 @@ import {
   CONTENT_SCRIPT_PORT,
   ExternalMethods,
   MessageFromContentScript,
-  InternalMethods,
-  MESSAGE_SOURCE,
 } from '@common/message-types';
 
 import type { VaultActions } from '@background/vault-types';
@@ -21,31 +19,19 @@ import { vaultMessageHandler } from '@background/vault';
 
 const IS_TEST_ENV = process.env.TEST_ENV === 'true';
 
-function setAppParamOfSourceInstallingExtension() {
-  // The app url is saved for use after onboarding
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  const appUrl = urlParams.get('app');
-  // Left for testing only
-  // const appUrl = 'http://localhost:3000/';
-  if (appUrl) window.localStorage.setItem('appUrl', appUrl);
-}
-
-function getAppParamOfSourceInstallingExtension() {
-  const appUrl = window.localStorage.getItem('appUrl') || undefined;
-  return appUrl;
-}
+const CHROME_STORE_URL =
+  'https://chrome.google.com/webstore/detail/stacks-wallet/ldinpeekobnhjjdofggfgjlcehhmanlj/';
+const FIREFOX_STORE_URL = 'https://addons.mozilla.org/en-US/firefox/addon/stacks-wallet/';
 
 // Listen for install event
 chrome.runtime.onInstalled.addListener(async details => {
   if (details.reason === 'install' && !IS_TEST_ENV) {
-    setAppParamOfSourceInstallingExtension();
-    const appUrl = getAppParamOfSourceInstallingExtension();
-    // Reload the app tab right after install to detect the extension
     chrome.tabs.query({ lastFocusedWindow: true }, async tabs => {
-      const appTab = tabs?.find(tab => tab.url === appUrl);
+      const appTab = tabs?.find(
+        tab => tab.url === CHROME_STORE_URL || tab.url === FIREFOX_STORE_URL
+      );
       if (appTab?.id) {
-        await chrome.tabs.reload(appTab?.id);
+        await chrome.tabs.remove(appTab.id);
       }
     });
     await chrome.tabs.create({
@@ -92,22 +78,12 @@ chrome.runtime.onConnect.addListener(port => {
   }
 });
 
-function redirectToAppTab() {
-  const appUrl = getAppParamOfSourceInstallingExtension();
+function goBackToApp() {
   chrome.tabs.query({ lastFocusedWindow: true }, async tabs => {
-    const appTab = tabs?.find(tab => tab.url === appUrl);
-    if (appTab?.id) {
-      await chrome.tabs.update(appTab?.id, { active: true });
-      chrome.tabs.sendMessage(appTab?.id, {
-        source: MESSAGE_SOURCE,
-        method: InternalMethods.completeOnboarding,
-        payload: undefined,
-      });
-    } else {
-      // Only open a new tab if the user has closed the app tab
-      await chrome.tabs.create({
-        url: appUrl,
-      });
+    const appTabId = tabs[tabs.length - 2].id;
+    if (appTabId) {
+      await chrome.tabs.update(appTabId, { active: true });
+      await chrome.tabs.reload(appTabId);
     }
   });
 }
@@ -117,9 +93,9 @@ chrome.runtime.onMessage.addListener((message: VaultActions, sender, sendRespons
   // Only respond to internal messages from our UI, not content scripts in other applications
   if (!sender.url?.startsWith(chrome.runtime.getURL(''))) return;
   // Go back to app tab after setting password
-  if (message.method === 'completeOnboarding') {
+  if (message.method === 'redirectAfterSetPassword') {
     // Delay redirect for a smoother transition
-    setTimeout(() => redirectToAppTab(), 500);
+    setTimeout(() => goBackToApp(), 500);
   }
   void vaultMessageHandler(message).then(sendResponse).catch(sendResponse);
   // Return true to specify that we are responding async
