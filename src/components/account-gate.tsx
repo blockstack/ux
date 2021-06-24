@@ -23,7 +23,7 @@ export const AccountGate: React.FC = memo(({ children }) => {
     if (step === Step.VIEW_KEY) {
       return <SaveYourKeyView hideActions handleNext={() => setStep(Step.SET_PASSWORD)} />;
     } else if (step === Step.SET_PASSWORD) {
-      return <SetPasswordPage />;
+      return <SetPasswordPage redirect />;
     }
   }
   if (!isSignedIn && encryptedSecretKey) {

@@ -96,6 +96,10 @@ function throwUnhandledMethod(message: VaultActions) {
 // Reducer to manage the state of the vault
 export const vaultReducer = async (message: VaultActions): Promise<InMemoryVault> => {
   switch (message.method) {
+    case InternalMethods.redirectAfterSetPassword:
+      return {
+        ...inMemoryVault,
+      };
     case InternalMethods.getWallet:
       return {
         ...inMemoryVault,

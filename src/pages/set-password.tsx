@@ -14,6 +14,7 @@ import { USERNAMES_ENABLED } from '@common/constants';
 import { validatePassword, blankPasswordValidation } from '@common/validation/validate-password';
 import { Body, Caption } from '@components/typography';
 import { Header } from '@components/header';
+import { useVaultMessenger } from '@common/hooks/use-vault-messenger';
 
 const HUMAN_REACTION_DEBOUNCE_TIME = 250;
 
@@ -33,11 +34,11 @@ export const SetPasswordPage: React.FC<SetPasswordProps> = ({
   const { doSetPassword, wallet, doFinishSignIn } = useWallet();
   const doChangeScreen = useDoChangeScreen();
   const { decodedAuthRequest } = useOnboardingState();
+  const { doRedirectAfterSetPassword } = useVaultMessenger();
 
   const submit = useCallback(
     async (password: string) => {
       if (!wallet) throw 'Please log in before setting a password.';
-      setLoading(true);
       await doSetPassword(password);
       if (accountGate) return;
       if (decodedAuthRequest) {
@@ -70,11 +71,13 @@ export const SetPasswordPage: React.FC<SetPasswordProps> = ({
       setLoading(true);
       if (strengthResult.meetsAllStrengthRequirements) {
         await submit(password);
+        // Sends message to background script
+        await doRedirectAfterSetPassword();
         return;
       }
       setLoading(false);
     },
-    [strengthResult, submit]
+    [strengthResult, submit, doRedirectAfterSetPassword]
   );
 
   const validationSchema = yup.object({

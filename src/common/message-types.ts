@@ -22,6 +22,7 @@ export enum InternalMethods {
   unlockWallet = 'unlockWallet',
   lockWallet = 'lockWallet',
   switchAccount = 'switchAccount',
+  redirectAfterSetPassword = 'redirectAfterSetPassword',
 }
 
 export type ExtensionMethods = ExternalMethods | InternalMethods;
@@ -61,5 +62,13 @@ export type TransactionResponseMessage = Message<
   }
 >;
 
+export type CompleteOnboardingResponseMessage = Message<
+  InternalMethods.redirectAfterSetPassword,
+  undefined
+>;
+
 export type MessageFromContentScript = AuthenticationRequestMessage | TransactionRequestMessage;
-export type MessageToContentScript = AuthenticationResponseMessage | TransactionResponseMessage;
+export type MessageToContentScript =
+  | AuthenticationResponseMessage
+  | TransactionResponseMessage
+  | CompleteOnboardingResponseMessage;
