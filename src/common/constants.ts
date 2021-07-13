@@ -49,6 +49,8 @@ export type Networks = Record<string, Network>;
 export const defaultNetworks: Networks = {
   mainnet: {
     url: 'https://stacks-node-api.mainnet.stacks.co',
+    // TOREMOVE
+    // url: 'https://stacks-node-api-microblocks.stacks.co'
     name: 'Mainnet',
     chainId: ChainID.Mainnet,
   },
