@@ -335,3 +335,10 @@ export async function fetchWithTimeout(
 
   return response;
 }
+
+// copied from explorer
+export const validateTxId = (tx_id: string): boolean => {
+  const regex = /0x[A-Fa-f0-9]{64}/;
+  const matches = regex.exec(tx_id);
+  return matches?.[0] === tx_id;
+};

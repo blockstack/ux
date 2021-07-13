@@ -10,7 +10,6 @@ import { getContractName, isPendingTx, truncateMiddle } from '@stacks/ui-utils';
 import BigNumber from 'bignumber.js';
 
 import { stacksValue } from '@common/stacks-utils';
-import { useExplorerLink } from '@common/hooks/use-explorer-link';
 
 import { Caption, Title } from '@components/typography';
 import { SpaceBetween } from '@components/space-between';
@@ -18,6 +17,7 @@ import { TxItemIcon } from '@components/tx-icon';
 import { Tooltip } from '@components/tooltip';
 import { useCurrentAccount } from '@common/hooks/account/use-current-account';
 import { usePressable } from '@components/item-hover';
+import { useNavigate } from 'react-router';
 
 type Tx = MempoolTransaction | Transaction;
 
@@ -90,8 +90,9 @@ const Status: React.FC<{ transaction: Tx } & BoxProps> = ({ transaction, ...rest
 
 export const TxItem: React.FC<TxItemProps & BoxProps> = ({ transaction, ...rest }) => {
   const [component, bind] = usePressable(true);
-  const { handleOpenTxLink } = useExplorerLink();
+  // const { handleOpenTxLink } = useExplorerLink();
   const currentAccount = useCurrentAccount();
+  const navigate = useNavigate();
 
   if (!transaction) {
     return null;
@@ -116,7 +117,7 @@ export const TxItem: React.FC<TxItemProps & BoxProps> = ({ transaction, ...rest 
 
   return (
     <Box
-      onClick={() => handleOpenTxLink(transaction.tx_id)}
+      onClick={() => navigate(`transaction/${transaction.tx_id}`)}
       position="relative"
       cursor="pointer"
       {...bind}

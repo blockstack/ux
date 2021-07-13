@@ -44,6 +44,7 @@ export enum ScreenPaths {
   ADD_NETWORK = '/add-network',
   EDIT_POST_CONDITIONS = '/transaction/post-conditions',
   TRANSACTION_POPUP = '/transaction',
+  TRANSACTION_DETAILS = '/transaction/:txid',
 }
 
 export const persistedScreens = [

@@ -27,6 +27,7 @@ import { lastSeenStore } from '@store/wallet';
 import { Unlock } from '@components/unlock';
 import { useUpdateAtom } from 'jotai/utils';
 import { PopupHome } from '@pages/home/home';
+import { TransactionDetails } from '@pages/transaction-details/transaction-details';
 
 interface RouteProps {
   path: ScreenPaths;
@@ -66,12 +67,12 @@ export const Routes: React.FC = () => {
     return <Installed />;
   }, [isSignedIn, encryptedSecretKey]);
 
-  const getSignInComponent = () => {
+  const getSignInComponent = useCallback(() => {
     if (isLocked) return <Unlock />;
     if (isSignedIn)
       return <Navigate to={ScreenPaths.CHOOSE_ACCOUNT} screenPath={ScreenPaths.CHOOSE_ACCOUNT} />;
     return <InstalledSignIn />;
-  };
+  }, [isLocked, isSignedIn]);
 
   const getSignUpElement = () => {
     if (isLocked) return <Unlock />;
@@ -124,6 +125,9 @@ export const Routes: React.FC = () => {
       {/* Transactions */}
       <AccountGateRoute path={ScreenPaths.TRANSACTION_POPUP}>
         <TransactionPage />
+      </AccountGateRoute>
+      <AccountGateRoute path={ScreenPaths.TRANSACTION_DETAILS}>
+        <TransactionDetails />
       </AccountGateRoute>
     </RoutesDom>
   );
